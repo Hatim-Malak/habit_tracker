@@ -16,8 +16,8 @@ public class UserPrincipal implements UserDetails {
     public UserPrincipal(User user){
         this.user = user;
     }
-    public String getEmail(){
-        return user.getEmail();
+    public String getName(){
+        return user.getUsername();
     }
 
     public int getId(){
@@ -35,7 +35,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
     
 }

@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import Task_Tracker.Backend.repository.BlacklistedTokenRepo;
 import Task_Tracker.Backend.services.JwtService;
 import Task_Tracker.Backend.services.MyUserDetailService;
 import jakarta.servlet.FilterChain;
@@ -35,6 +36,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = null;
         if(authHeader!=null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
+
+            BlacklistedTokenRepo blacklistedTokenRepo  = context.getBean(BlacklistedTokenRepo.class);
+            if(blacklistedTokenRepo.existsByToken(token)){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted. Please log in again.");
+                return;
+            }
             username = jwtService.extratctUsername(token);
         }
 
