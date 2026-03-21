@@ -7,11 +7,12 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import Task_Tracker.Backend.models.Task;
 import Task_Tracker.Backend.models.TaskCompletion;
 
-
+@Repository
 public interface TaskCompletionRepo extends JpaRepository<TaskCompletion,Integer> {
     Optional<TaskCompletion> findByTaskAndCompletionDate(Task task, LocalDate date);
     List<TaskCompletion> findAllByTaskOrderByCompletionDateDesc(Task task);
