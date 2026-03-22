@@ -95,6 +95,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>RoutineX10</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
