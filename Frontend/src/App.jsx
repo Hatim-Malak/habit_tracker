@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import SignUp from "./Pages/SignUp";
 import Login from "./Pages/Login";
 import DashboardPage from "./Pages/DasboardPage";
+import CreateRoutine from "./Pages/CreateRoutine";
 
 /* ── protected route wrapper ── */
 const ProtectedRoute = ({ children }) => {
@@ -60,6 +61,15 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/create-routine"
+              element={
+                <ProtectedRoute>
+                  <CreateRoutine />
                 </ProtectedRoute>
               }
             />

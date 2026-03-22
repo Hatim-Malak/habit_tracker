@@ -38,7 +38,7 @@ export const useTask = create((set,get)=>({
            toast.error(error.response.data.message) 
         }
         finally{
-            set({updateSingleTask:false})
+            set({updatingSingleTask:false})
         }
     },
 
@@ -56,7 +56,7 @@ export const useTask = create((set,get)=>({
     },
 
     deleteSingleTask:async(taskId)=>{
-        set({deleteSingleTask:true})
+        set({deletingSingleTask:true})
         try {
             const res = await axiosInstance.delete(`/task/delete/${taskId}`)
             toast.success("Routine task deleted")
@@ -64,7 +64,7 @@ export const useTask = create((set,get)=>({
             toast.error(error.response.data.message) 
         }
         finally{
-            set({deleteSingleTask:false})
+            set({deletingSingleTask:false})
         }
     },
     
@@ -81,15 +81,15 @@ export const useTask = create((set,get)=>({
         }
     },
     toggleRoutineForToday:async(taskId)=>{
-        set({toggleRoutineForToday:true})
+        set({togglingRoutineForToday:true})
         try {
             const res = await axiosInstance.get(`/task-completion/check/${taskId}`)
             toast.success("task done")
         } catch (error) {
-            toast.error(error.response.data.message) 
+            toast.error(error.response?.data?.message || "An unexpected error occurred") 
         }
         finally{
-            set({toggleRoutineForToday:false})
+            set({togglingRoutineForToday:false})
         }
     },
     getStatsForGraph:async(taskId)=>{
@@ -110,7 +110,7 @@ export const useTask = create((set,get)=>({
             const res = await axiosInstance.get(`/task-completion/history`)
             set({history:res.data})
         } catch (error) {
-            toast.error(error.response.data.message) 
+            toast.error(error.response?.data?.message || "An unexpected error occurred") 
         }
         finally{
             set({gettingHistory:false})
