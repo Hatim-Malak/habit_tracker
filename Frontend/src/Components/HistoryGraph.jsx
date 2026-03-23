@@ -58,8 +58,9 @@ const HistoryGraph = () => {
       startTime: formatTime(editForm.startTime),
       endTime: formatTime(editForm.endTime)
     };
-
-    await updateSingleTask(payload, editingTask._id);
+      
+    const targetId = editingTask.taskId || editingTask.id;
+    await updateSingleTask(payload, targetId);
     setEditModalOpen(false);
     await getHistoryForGraph();
     await getStatsForGraph();

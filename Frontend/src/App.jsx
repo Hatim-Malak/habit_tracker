@@ -5,17 +5,11 @@ import { Toaster } from "react-hot-toast";
 import { AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
+import LandingPage from "./Pages/LandingPage"; // 1. Imported Landing Page
 import SignUp from "./Pages/SignUp";
 import Login from "./Pages/Login";
 import DashboardPage from "./Pages/DasboardPage";
 import CreateRoutine from "./Pages/CreateRoutine";
-
-/* ── protected route wrapper ── */
-const ProtectedRoute = ({ children }) => {
-  const { authUser } = useAuth();
-  if (!authUser) return <Navigate to="/login" replace />;
-  return children;
-};
 
 /* ── loading spinner ── */
 const FullScreenLoader = () => (
@@ -27,35 +21,63 @@ const FullScreenLoader = () => (
   </div>
 );
 
+/* ── protected route wrapper (Updated) ── */
+const ProtectedRoute = ({ children }) => {
+  const { authUser, isCheckingAuth } = useAuth();
+  // We check auth HERE now. So if they refresh /dashboard, they see a loader, not the login page.
+  if (isCheckingAuth) return <FullScreenLoader />;
+  if (!authUser) return <Navigate to="/login" replace />;
+  return children;
+};
+
+/* ── auth route wrapper (New) ── */
+// This prevents the login/signup forms from "flashing" on the screen for a split second 
+// if a logged-in user accidentally types /login in the URL bar.
+const AuthRoute = ({ children }) => {
+  const { authUser, isCheckingAuth } = useAuth();
+  if (isCheckingAuth) return <FullScreenLoader />;
+  if (authUser) return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
 const App = () => {
-  const { authUser, isCheckingAuth, checkAuth } = useAuth();
+  const { checkAuth } = useAuth();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  if (isCheckingAuth) return <FullScreenLoader />;
+  // Notice: The global `if (isCheckingAuth)` is GONE! 
+  // The app will immediately render the router.
 
   return (
     <>
       <BrowserRouter>
         <AnimatePresence mode="wait">
           <Routes>
-            {/* ── auth routes ── */}
+            
+            {/* ── Public Landing Route ── */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* ── Auth Routes ── */}
             <Route
               path="/signup"
               element={
-                authUser ? <Navigate to="/dashboard" replace /> : <SignUp />
+                <AuthRoute>
+                  <SignUp />
+                </AuthRoute>
               }
             />
             <Route
               path="/login"
               element={
-                authUser ? <Navigate to="/dashboard" replace /> : <Login />
+                <AuthRoute>
+                  <Login />
+                </AuthRoute>
               }
             />
 
-            {/* ── protected ── */}
+            {/* ── Protected Routes ── */}
             <Route
               path="/dashboard"
               element={
@@ -64,7 +86,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/create-routine"
               element={
@@ -74,8 +95,10 @@ const App = () => {
               }
             />
 
-            {/* ── fallback ── */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            {/* ── Fallback ── */}
+            {/* Now defaults back to the landing page instead of login */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+            
           </Routes>
         </AnimatePresence>
       </BrowserRouter>
